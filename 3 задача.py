@@ -19,6 +19,7 @@ class Example(QWidget):
         self.lon = 37.530887
         self.lat = 55.894568
         self.z = 15
+        self.L = 'map'
         self.getImage()
         self.initUI()
 
@@ -26,7 +27,7 @@ class Example(QWidget):
         params = {
             'll': f'{self.lon},{self.lat}',
             'z': self.z,
-            'l': 'map'
+            'l': self.L
         }
         api_server = "http://static-maps.yandex.ru/1.x/"
         response = requests.get(api_server, params=params)
@@ -50,6 +51,18 @@ class Example(QWidget):
         self.image.move(0, 0)
         self.image.resize(600, 450)
         self.image.setPixmap(self.pixmap)
+        self.v = QLabel(self)
+        self.v.setText('Схема: M')
+        self.v.move(3, 5)
+        self.w = QLabel(self)
+        self.w.setText('Спутник: S')
+        self.w.move(3, 20)
+        self.k = QLabel(self)
+        self.k.setText('Гибрид: H')
+        self.k.move(3, 35)
+        self.v.setStyleSheet("background-color: white")
+        self.w.setStyleSheet("background-color: white")
+        self.k.setStyleSheet("background-color: white")
 
     def closeEvent(self, event):
         os.remove(self.map_file)
@@ -76,6 +89,12 @@ class Example(QWidget):
             self.lat += LAT_STEP * math.pow(2, 15 - self.z)
         elif event.key() == Qt.Key_Down and self.lat > -90:
             self.lat -= LAT_STEP * math.pow(2, 15 - self.z)
+        elif event.key() == Qt.Key_M:
+            self.L = 'map'
+        elif event.key() == Qt.Key_S:
+            self.L = 'sat'
+        elif event.key() == Qt.Key_H:
+            self.L = 'skl'
 
         if -90 < self.lon < 90 and 0 < self.lat < 180:
             self.view_image()
